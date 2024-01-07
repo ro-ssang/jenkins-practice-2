@@ -1,0 +1,47 @@
+version: "3.8"
+
+services:
+  jenkins-server:
+    container_name: jenkins-server
+    build:
+      context: ./jenkins
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+      - 50000:50000
+    volumes:
+      - jenkins_home:/var/jenkins_home
+    networks:
+      - jenkins_net
+      
+  # tomcat-server:
+  #   container_name: tomcat-server
+  #   build:
+  #     context: ./tomcat
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 8888:8080
+  #   networks:
+  #     - jenkins_net
+
+  ssh-server:
+    container_name: ssh-server
+    build:
+      context: ./ssh-server
+      dockerfile: Dockerfile
+    privileged: true
+    ports:
+      - 8888:8080
+      - 8822:22
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup
+    networks:
+      - jenkins_net
+
+volumes:
+  jenkins_home:
+    external: true
+
+networks:
+  jenkins_net:
+    name: jenkins_net
